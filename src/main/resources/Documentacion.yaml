@@ -1,0 +1,350 @@
+openapi: 3.0.1
+info:
+  title: API Mareo Envios.
+  description: Esta API se encarga de la gestion digital de envios de mercaderia
+    a todo el país.
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+tags:
+- name: customer
+  description: Este endpoint maneja toda la información relacionada con los
+    clientes.
+- name: shipping
+  description: Este endpoint maneja toda la información relacionada con los
+    envíos.
+- name: reports
+  description: Este endpoint maneja informacion sobre reportes de productos.
+    
+paths:
+  /customer/info/{customerid}:
+    get:
+      tags:
+      - customer
+      summary: Trae la información almacenada en la BD del cliente con el id
+        indicado.
+      parameters:
+      - $ref: "#/components/parameters/customerid"
+      responses:
+        200:
+          description: (OK) la información del cliente se ha conseguido con éxito.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/customer"
+              examples:
+                customerExample:
+                  $ref: '#/components/examples/customerExample'
+        404:
+          $ref: "#/components/responses/NotFound"
+  
+  /shipping/info/{shippingid}:
+    get:
+      tags:
+      - shipping
+      summary: Trae la información almacenada en la BD del envío con el id
+        indicado.
+      parameters:
+      - $ref: "#/components/parameters/shippingid"
+      responses:
+        200:
+          description: (OK) la información del envío se ha conseguido con éxito.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/shipping"
+              examples:
+                shippingExample:
+                  $ref: '#/components/examples/shippingExample'
+        404:
+          $ref: "#/components/responses/NotFound"
+    
+  /shipping/transition/sendToMail/{shippingid}:   
+    put:
+      tags:
+      - shipping
+      summary: Actualiza el estado "Inicial" del envío correspondiente al id brindado a "Entregado al correo".
+      parameters:
+      - $ref: "#/components/parameters/shippingid"
+      responses:
+        200:
+          description: (OK) la información del envío se ha actualizado exitosamente.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/shipping"
+              examples:
+                shippingSendToMailExample:
+                  $ref: '#/components/examples/shippingSendToMailExample'
+        404:
+          $ref: "#/components/responses/NotFound"
+        400:
+          $ref: "#/components/responses/BadRequest"
+    
+            
+  /shipping/transition/inTravel/{shippingid}:   
+    put:
+      tags:
+      - shipping
+      summary: Actualiza el estado "Entregado al correo" del envío correspondiente al id brindado a "En camino".
+      parameters:
+      - $ref: "#/components/parameters/shippingid"
+      responses:
+        200:
+          description: (OK) la información del envío se ha actualizado exitosamente.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/shipping"
+              examples:
+                shippingInTravelExample:
+                  $ref: '#/components/examples/shippingInTravelExample'
+        404:
+          $ref: "#/components/responses/NotFound"
+        400:
+          $ref: "#/components/responses/BadRequest"
+  
+  /shipping/transition/delivered/{shippingid}:   
+    put:
+      tags:
+      - shipping
+      summary: Actualiza el estado "En camino" del envío correspondiente al id brindado a "Entregado".
+      parameters:
+      - $ref: "#/components/parameters/shippingid"
+      responses:
+        200:
+          description: (OK) la información del envío se ha actualizado exitosamente.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/shipping"
+              examples:
+                shippingDeliveredExample:
+                  $ref: '#/components/examples/shippingDeliveredExample'
+        404:
+          $ref: "#/components/responses/NotFound"
+        400:
+          $ref: "#/components/responses/BadRequest"
+  
+  /shipping/transition/cancelled/{shippingid}:   
+    put:
+      tags:
+      - shipping
+      summary: Actualiza el estado "Inicial" o "Entregado al correo" del envío correspondiente al id brindado a "Cancelado".
+      parameters:
+      - $ref: "#/components/parameters/shippingid"
+      responses:
+        200:
+          description: (OK) la información del envío se ha actualizado exitosamente.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/shipping"
+              examples:
+                shippingCancelledExample:
+                  $ref: '#/components/examples/shippingCancelledExample'
+        404:
+          $ref: "#/components/responses/NotFound"
+        400:
+          $ref: "#/components/responses/BadRequest"
+          
+  /reports/topSended:   
+    get:
+      tags:
+      - reports
+      summary: Obtiene un listado con la descripción y cantidad de los 3 productos más solicitados para su envío.
+      responses:
+        200:
+          description: (OK) la información del reporte se ha conseguido 
+            con éxito.
+          content:
+            application/jason:
+              schema:
+                $ref: "#/components/schemas/reportsTopSended"
+              examples:
+                topSendedExample:
+                  $ref: '#/components/examples/topSendedExample'
+      
+components:
+  responses:
+    NotFound:
+      description: (NotFound) no se encontró la información.
+    BadRequest:
+      description: (BadRequest) El envío no se actualizó debido a que su estado no era el requerido.
+    
+  
+  parameters:
+    customerid:
+      in: path
+      name: customerid
+      schema:
+        type: integer
+      required: true
+      description: ID numerico del cliente a traer.
+      
+    shippingid:
+      in: path
+      name: shippingid
+      schema:
+        type: integer
+      required: true
+      description: ID numerico del envío a traer.
+      
+  schemas:
+    customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador numérico del cliente.
+        firstName:
+          type: string
+          description: Nombre del cliente.
+        lastName: 
+          type: string
+          description: Apellido del cliente.
+        adress: 
+          type: string
+          description: Dirección del cliente.
+        city:
+          type: string
+          description: Ciudad del cliente.
+    
+    shipping:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador numérico del envío.
+        customer: 
+          $ref: "#/components/schemas/customer"
+        state:
+          type: string
+          enum: [Inicial, Entregado al correo, En camino, Entregado, Cancelado]
+          description: Estado del envío.
+        sendDate:
+          type: string
+          format: date
+          description: Fecha en que se realizó el envío.
+        arriveDate:
+          type: string
+          format: date
+          description: Fecha en la que debería llegar el envío.
+        priority:
+          type: integer
+          description: Prioridad del envío.
+    
+    report:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Descripción de un producto.
+        count: 
+          type: integer
+          description: Cantidad del producto.
+      
+    reportsTopSended:
+      type: array
+      items:
+        $ref: '#/components/schemas/report'
+       
+         
+  examples:
+    customerExample:
+      summary: Ejemplo de un cliente.
+      value:
+        id: 4
+        firstName: Pedro
+        lastName: Gomez
+        adress: Calle falsa 123
+        city: CABA
+    
+    shippingExample:
+      summary: Ejemplo de un envío.
+      value:
+        id: 2
+        customer: 
+          id: 3
+          firstName: Jose
+          lastName: Perez
+          adress: Av. Italia 233
+          city: General Belgrano
+        state: Inicial
+        sendDate: "2022-02-08T03:00:00.000+00:00"
+        arriveDate: "2022-02-13T03:00:00.000+00:00"
+        priority: 2
+        
+    shippingCancelledExample:
+      summary: Ejemplo de un envío con el estado Cancelado.
+      value:
+        id: 2
+        customer: 
+          id: 3
+          firstName: Jose
+          lastName: Perez
+          adress: Av. Italia 233
+          city: General Belgrano
+        state: Cancelado
+        sendDate: "2022-02-08T03:00:00.000+00:00"
+        arriveDate: "2022-02-13T03:00:00.000+00:00"
+        priority: 2
+        
+    shippingSendToMailExample:
+      summary: Ejemplo de un envío con el estado Entregado al correo.
+      value:
+        id: 2
+        customer: 
+          id: 3
+          firstName: Jose
+          lastName: Perez
+          adress: Av. Italia 233
+          city: General Belgrano
+        state: Entregado al correo
+        sendDate: "2022-02-08T03:00:00.000+00:00"
+        arriveDate: "2022-02-13T03:00:00.000+00:00"
+        priority: 2
+        
+    shippingInTravelExample:
+      summary: Ejemplo de un envío con el estado En camino.
+      value:
+        id: 2
+        customer: 
+          id: 3
+          firstName: Jose
+          lastName: Perez
+          adress: Av. Italia 233
+          city: General Belgrano
+        state: En camino
+        sendDate: "2022-02-08T03:00:00.000+00:00"
+        arriveDate: "2022-02-13T03:00:00.000+00:00"
+        priority: 2
+        
+    shippingDeliveredExample:
+      summary: Ejemplo de un envío con el estado Entregado.
+      value:
+        id: 2
+        customer: 
+          id: 3
+          firstName: Jose
+          lastName: Perez
+          adress: Av. Italia 233
+          city: General Belgrano
+        state: Entregado
+        sendDate: "2022-02-08T03:00:00.000+00:00"
+        arriveDate: "2022-02-13T03:00:00.000+00:00"
+        priority: 2
+        
+      
+    topSendedExample:
+      summary: Ejemplo de los productos más enviados.
+      value:
+        #
+          - description: Modem
+            count: 7
+          - description: Maiz Pisingallo
+            count: 5
+          - description: Celular
+            count: 4 
+        
+      
