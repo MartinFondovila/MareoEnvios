@@ -1,6 +1,11 @@
-
-# Created by https://www.toptal.com/developers/gitignore/api/maven,java
-# Edit at https://www.toptal.com/developers/gitignore?templates=maven,java
+HELP.md
+mvnw
+mvnw.cmd
+.mvn
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### Java ###
 # Compiled class file
@@ -42,3 +47,32 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/maven,java
 
+
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
